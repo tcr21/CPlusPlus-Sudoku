@@ -90,6 +90,14 @@ int main() {
 
   // write more tests
 
+  // Q5.1 Which test is impossible? 
+  // load each mystery board and then run solveboard function on each
+
+  // Q5.2 Which test is extremely hard? 
+  // Ideas: count number of recursions
+  
+
+
   return 0;
 }
 

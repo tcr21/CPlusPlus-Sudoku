@@ -80,7 +80,7 @@ bool is_complete(const char board[9][9])
 {
   for (int r = 0; r < 9; r++)
     for (int c=0; c < 9; c++)
-      if (!isdigit(board[r][c]))
+      if (!isdigit(board[r][c]) || (board[r][c] < 49) || (board[r][c] > 57))
         return false; 
   return true; 
 }
