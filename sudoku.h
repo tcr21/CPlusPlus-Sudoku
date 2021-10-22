@@ -36,3 +36,5 @@ bool solve_board(char board[9][9]);
 bool find_empty_position(char position[2], char board[9][9]);
 
 void convert_position_indices_into_characters (const int row_to_update, const int col_to_update, char position[2]); 
+
+// Draft 3
