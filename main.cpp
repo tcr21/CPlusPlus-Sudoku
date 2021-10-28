@@ -1,3 +1,5 @@
+// Tiphaine Ramenason
+
 #include <iostream>
 #include <cstdio>
 #include "sudoku.h"

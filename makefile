@@ -9,4 +9,6 @@ sudoku.o: sudoku.cpp sudoku.h
 
 clean:
 	rm -f *.o sudoku 
+
+
 	

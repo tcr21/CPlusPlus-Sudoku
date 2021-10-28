@@ -1,3 +1,5 @@
+// Tiphaine Ramenason
+
 // PRE-SUPPLIED FUNCTIONS
 
 void load_board(const char* filename, char board[9][9]);
