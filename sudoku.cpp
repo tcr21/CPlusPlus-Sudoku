@@ -73,13 +73,15 @@ void display_board(const char board[9][9]) {
 
 /* add your functions here */
 
+// For each question, please note functions/ helper functions are numbered below from 1 onwards eg Q2.1 first function definition, Q2.2 second function definition etc
+
 // QUESTION 1
 
-// Q1. Definition of is_complete function: takes a 9x9 array of characters and returns true if all board positions are occupied by digits, and false otherwise.
+// Q1. Definition of is_complete function: takes a 9x9 array of characters and returns true if all board positions are occupied by digits, and false otherwise
 bool is_complete(const char board[9][9])
 {
   for (int r = 0; r < 9; r++)
-    for (int c=0; c < 9; c++)
+    for (int c = 0; c < 9; c++)
       if (!isdigit(board[r][c]) || (board[r][c] < 49) || (board[r][c] > 57))
         return false; 
   return true; 
@@ -87,30 +89,34 @@ bool is_complete(const char board[9][9])
 
 // QUESTION 2
 
-// Q2.1 Definition of make_move function: attempts to place digit onto board at given position. Returns false if position is invalid. Returns true if it is and updates board accordingly. 
-bool make_move(const char position[2], const char digit, char board[9][9])
+// Q2.1 Definition of make_move function: attempts to place digit onto board at given position. Returns false if position is invalid. Returns true if it is valid and updates board accordingly
+bool make_move(const char position[3], const char digit, char board[9][9])
 {  
-  // Declare variables for target row and column ranging from 0-8
+  // Declare variables for target row and column indices ranging from 0-8
   int row, col; 
 
   // Check position and digit range are valid
   if (!check_position_range(position) || !check_digit_range(digit))
     {
-      cout << "OUT OF RANGE. Please check row is a capital letter ranging from A-I, column is an integer ranging from 1-9, and digit is an integer ranging from 1-9. \n"; // Test
+      cout << "OUT OF RANGE. Please check row is a capital letter ranging from A-I, column is an integer ranging from 1-9, and digit is an integer ranging from 1-9. \n";
       return false; 
     }
 
   // Convert position row and column characters into indices ranging from 0-8
   convert_position_characters_into_indices(position, row, col);
+  if (row == -1)
+  {
+    return false; 
+  }
   
   // Check position is empty
   if (!check_position_is_empty(row, col, board))
   {
-    cout << "SPACE IS NOT EMPTY. \n"; // Test
+    cout << "SPACE IS NOT EMPTY. \n";
     return false; 
   }
 
-  // Check digit is absent from position row, column and box
+  // Check digit is absent from position row, column and box. If it is, say the move is valid and update the board
   if (absent_from_row(row, digit, board) && absent_from_column(col, digit, board) && absent_from_box(row, col, digit, board))
   {
     update_board (row, col, digit, board); 
@@ -121,10 +127,10 @@ bool make_move(const char position[2], const char digit, char board[9][9])
 }
 
 // Q2.2 Definition of check_position_range function: checks that the position at which we wish to insert a digit ranges from A-I for row and 1-9 for column
-bool check_position_range(const char position[2])
+bool check_position_range(const char position[3])
 {
   // Check row range
-  if (!isalpha(position[0]) || position[0] < 65 || position[0] > 90)
+  if (!isalpha(position[0]) || position[0] < 65 || position[0] > 73)
     return false; 
   // Check column range
   if (!isdigit(position[1]) || position[1] < 49 || position[1] > 57)
@@ -141,9 +147,9 @@ bool check_digit_range(const char digit)
 }
 
 // Q2.4 Definition of convert_position_characters_into_indices function: converts the position's row and column characters into indices ranging from 0-8
-void convert_position_characters_into_indices(const char position[2], int &row, int &col)
+void convert_position_characters_into_indices(const char position[3], int &row, int &col)
 {
-  // Convert row character into index // **TR COMMENT**: could make shorter using for loop and assigning value - 65 which is ASCII code for A
+  // Convert row character into row index
   switch (position[0])
   {
     case 'A': 
@@ -175,9 +181,10 @@ void convert_position_characters_into_indices(const char position[2], int &row, 
       break; 
     default: 
       cout << "ROW LETTER NOT CONVERTED INTO INDEX. \n"; // Test
+      row = -1; 
   }
-  // Convert column character into index
-  col = position[1]-48 - 1;
+  // Convert column character into column index
+  col = position[1] - 48 - 1;
 }
 
 // Q2.5 Definition of check_position_is_empty function: checks that position at which we wish to insert a digit is empty
@@ -226,7 +233,7 @@ bool absent_from_box(const int row, const int col, const char digit, const char 
   return true;
 }
 
-// Q2.9 Update the board if the move was valid
+// Q2.9 Definition of update_board function: updates the board
 void update_board (const int row, const int col, const char digit, char board[9][9])
 {
   board[row][col] = digit; 
@@ -234,8 +241,8 @@ void update_board (const int row, const int col, const char digit, char board[9]
 
 // QUESTION 3 
 
-// Q3. Definition of save_board function: outputs two-dimensional character array board to file with name filename. Returns true if file was successfully written, false otherwise.
-bool save_board(char* filename, const char board[9][9]) // **TR COMMENT**COMPILER WARNING**: when calling this function in main: C++ forbids converting string constant to char*. But might just be because the file name looks like a string constant
+// Q3. Definition of save_board function: outputs two-dimensional character array board to file with name filename. Returns true if file was successfully written, false otherwise
+bool save_board(const char* filename, const char board[9][9])
 {
   // Declare output stream and open file
   ofstream out_stream;
@@ -260,7 +267,7 @@ bool save_board(char* filename, const char board[9][9]) // **TR COMMENT**COMPILE
   // Close output stream
   out_stream.close(); 
 
-  // Check all 9 rows and columns have been copied // **TR COMMENT**: not sure if this is enough to test the save was successful
+  // Check all 9 rows and columns have been copied
   if (r == 9 && c == 9)
   {
     return true; 
@@ -273,13 +280,21 @@ bool save_board(char* filename, const char board[9][9]) // **TR COMMENT**COMPILE
 // Q4.1 Definition of solve_board function: takes in a sudoku board and solves it recursively
 bool solve_board(char board[9][9])
 {
+  /* Test used for Question 5.2
+  static int count;
+  count++; 
+  */
+  
   // Declare variables
-  char position[2];
+  char position[3];
   int row_of_move_to_undo, col_of_move_to_undo; 
 
-  // Identify an empty spot and update position accordingly
+  // Identify an empty spot and update position to be filled accordingly. When no more empty positions are found, it means the board is complete
   if (!find_empty_position(position, board))
   {
+    /* Test used for Question 5.2
+    cout << count;
+    */
     return true; 
   }
 
@@ -300,7 +315,7 @@ return false;
 }
 
 // Q4.2 Definition of find_empty_position function: identifies empty spot and updates position accordingly
-bool find_empty_position(char position[2], char board[9][9])
+bool find_empty_position(char position[3], char board[9][9])
 {
   int row_to_update, col_to_update;  
 
@@ -309,13 +324,17 @@ bool find_empty_position(char position[2], char board[9][9])
       if (board[row_to_update][col_to_update] == '.')
       {
         convert_position_indices_into_characters (row_to_update, col_to_update, position);
+        if (position[0] == 'X')
+        {
+          return false; 
+        }
         return true; 
       }
   return false; 
 }
 
 // Q4.3 Definition of convert_position_indices_into_characters function: converts row and column indices into characters
-void convert_position_indices_into_characters (const int row_to_update, const int col_to_update, char position[2])
+void convert_position_indices_into_characters (const int row_to_update, const int col_to_update, char position[3])
 {
   // Convert row index into character
   switch (row_to_update)
@@ -349,10 +368,10 @@ void convert_position_indices_into_characters (const int row_to_update, const in
       break; 
     default:
       cout << "ROW INDEX NOT CONVERTED INTO CHARACTER. \n"; // Test
+      position[0] = 'X';
   }
   // Convert column index into character
   position[1] = col_to_update + 48 + 1; 
 }
 
-// Draft 3
 

@@ -1,3 +1,47 @@
 Summarise your findings here (see specification).
 
-// Draft 3
+
+Q5.1 Which of the 3 mystery boards is impossible to solve?
+
+Result: Mystery board 2 is impossible to solve. 
+
+Method: Apply load_board and solve_board functions to each of mystery1, mystery2 and mystery3 files.  
+
+Refer to: main.cpp > Question 5.1. 
+
+
+Q5.2 Of the 2 solvable mystery boards, which one is extremely hard? 
+
+Result: Mystery board 1 is "extremely hard", and mystery board 3 is "hard", based on the count of recursions needed to solve each board at the starting position adopted by this program. 
+
+Method: 
+    - Insert the following inside the solve_board function in sudoku.cpp, to count the number of calls to the function
+        static int count;
+        count++;
+        (see comments in sudoku.cpp > solve_board function)
+    - Insert the following inside the same function, to print the count when the board is complete 
+        cout << count;
+        (see comments in sudoku.cpp > solve_board function)
+    - Comment out Question 4 and Question 5.1 in main.cpp, to ensure static count does not include all previous calls to solve_board
+    - Apply load_board and solve_board functions to mystery1 file
+        (see comments in main.cpp > Question 5.2 > // Count number of recursions to solve mystery board 1)
+    - Compile and run sudoku executable, and make note of mystery 1 board recursions count: 421 547
+    - Comment out Question 5.2 > // Count number of recursions to solve mystery board 1 in main.cpp, to ensure static count does not include calls to solve_board needed to solve mystery board 1
+    - Apply load_board and solve_board functions to mystery3 file
+        (see comments in main.cpp > Question 5.2 > // Count number of recursions to solve mystery board 3)
+    - Compile and run sudoku executable, and make note of mystery 3 board recursions count: 14 134
+    - 421 547 > 14 134 so more recursions were needed to solve mystery board 1. We interpret this as meaning mystery board 1 is extremely hard. 
+
+Limitations of method: 
+    - The above method only counts the number of recursions needed when starting at a specific empty spot on the board, and following a specific path thereafter.
+      Indeed, the solve_board function calls the find_empty_position function to find an empty spot. 
+      Within the find_empty_position, we use a for loop to go through each row from left to right, looking for the next empty position. 
+      (see sudoku.cpp > Q4.2)
+      However, if we were to fill out the board in a different order, we may end up with a different number of recursions. 
+      A more extensive method may choose to count recursions when starting at different positions and following different paths, and use the average number of recursions. 
+      Given time constraints, we assume doing the above is not in scope of this exercise. 
+
+Refer to: 
+    - sudoku.cpp > solve_board function, find_empty_position function
+    - main.cpp > Question 5.2
+
